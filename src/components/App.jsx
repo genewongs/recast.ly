@@ -1,41 +1,70 @@
 import exampleVideoData from '../data/exampleVideoData.js';
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
+import Search from './Search.js';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
+    // NOTE: exampleVideoData[0] is what was below.
     this.state = {
-      playing: false
+      videoList: {
+        data: []
+      },
+
+      playing: {
+        id: {videoId: ''},
+        snippet: {title: ''}
+      }
     };
+
     this.onClickHandler = this.onClickHandler.bind(this);
   }
 
-  onClickHandler(e) {
-    // if this.state.currentPlaying does not equal the video clicked
-    // update state
-    console.log(e);
+  componentDidMount() {
+    let callback = (data) => {
+      if (this.state.playing.id.videoId !== data[0].id.videoId) {
+        this.setState({
+          videoList: {
+            data: data
+          },
 
-    // this.setState({
-    //   playing: !this.state.playing
-    // });
+          playing: data[0]
+        });
+      }
+    };
+    this.props.searchYouTube('cat', callback);
+  }
+
+  onClickHandler(data) {
+    let currVidId = this.state.playing.id.videoId;
+
+    // update video list from state here?
+
+    if (currVidId !== data.id.videoId) {
+      this.setState({
+        playing: data
+      });
+    }
   }
 
   render() {
     return (
       <div>
+        {/* {this.componentDidMount()} */}
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
+            <Search />
             <div><h5><em>search</em> view goes here</h5></div>
           </div>
         </nav>
         <div className="row">
           <div className="col-md-7">
-            <VideoPlayer video={exampleVideoData[0]} />
+            <VideoPlayer video={this.state.playing} />
           </div>
           <div className="col-md-5">
-            <VideoList test={this.onClickHandler} videos={exampleVideoData} />
+            <VideoList test={this.onClickHandler} videos={this.state.videoList.data} />
           </div>
         </div>
       </div>
