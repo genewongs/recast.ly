@@ -9,12 +9,17 @@ class App extends React.Component {
     this.state = {
       playing: false
     };
+    this.onClickHandler = this.onClickHandler.bind(this);
   }
 
-  onClickHandler() {
-    this.setState({
-      playing: !this.state.playing
-    });
+  onClickHandler(e) {
+    // if this.state.currentPlaying does not equal the video clicked
+    // update state
+    console.log(e);
+
+    // this.setState({
+    //   playing: !this.state.playing
+    // });
   }
 
   render() {
@@ -30,7 +35,7 @@ class App extends React.Component {
             <VideoPlayer video={exampleVideoData[0]} />
           </div>
           <div className="col-md-5">
-            <VideoList videos={exampleVideoData} />
+            <VideoList test={this.onClickHandler} videos={exampleVideoData} />
           </div>
         </div>
       </div>

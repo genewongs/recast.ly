@@ -2,8 +2,9 @@ import VideoListEntry from './VideoListEntry.js';
 
 var VideoList = (props) => (
   <div className="video-list">
+    {/* {console.log(props)} */}
     {props.videos.map((v, index) => {
-      return (<VideoListEntry key={index} video={v} />);
+      return (<VideoListEntry key={index} video={v} test={props.test} />);
     })}
 
     {/* <div><h5><em>videoListEntry</em> view goes here</h5></div> */}
