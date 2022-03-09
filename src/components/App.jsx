@@ -2,6 +2,7 @@ import exampleVideoData from '../data/exampleVideoData.js';
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
 import Search from './Search.js';
+import searchYouTube from '../../src/lib/searchYouTube.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,33 +17,55 @@ class App extends React.Component {
       playing: {
         id: {videoId: ''},
         snippet: {title: ''}
+      },
+
+      autoPlay: {
+        play: false
       }
     };
 
     this.onClickHandler = this.onClickHandler.bind(this);
+    this.updateVideoData = this.updateVideoData.bind(this);
+    this.makeSearchQuery = this.makeSearchQuery.bind(this);
   }
 
   componentDidMount() {
-    let callback = (data) => {
-      if (this.state.playing.id.videoId !== data[0].id.videoId) {
-        this.setState({
-          videoList: {
-            data: data
-          },
+    searchYouTube('dogs', this.updateVideoData);
+  }
 
-          playing: data[0]
-        });
-      }
-    };
-    this.props.searchYouTube('cat', callback);
+  makeSearchQuery(input) {
+    // let callback = () => {
+    //   this.props.searchYouTube(input, this.updateVideoData);
+    // };
+
+    // (_.debounce(() => {
+    //   searchYouTube(input, this.updateVideoData);
+    // }, 500))();
+    // the string that the user wants to search for in youtube
+    // invoke api - passing in the `input` and callback - updateVideoData'
+    searchYouTube(input, this.updateVideoData); // FIXME: potentially uncomment
+    console.log('Query: ', input);
+  }
+
+  // handleDebounce = _.debounce(makeSearchQuery(e.target.value), 1000);
+
+  updateVideoData(data) {
+    if (data.length !== 0 && this.state.playing.id.videoId !== data[0].id.videoId) {
+      this.setState({
+        videoList: {
+          data: data
+        },
+        playing: data[0]
+      });
+    }
   }
 
   onClickHandler(data) {
     let currVidId = this.state.playing.id.videoId;
-
     // update video list from state here?
 
     if (currVidId !== data.id.videoId) {
+      // this.updateVideoData(data);
       this.setState({
         playing: data
       });
@@ -55,8 +78,7 @@ class App extends React.Component {
         {/* {this.componentDidMount()} */}
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <Search />
-            <div><h5><em>search</em> view goes here</h5></div>
+            <Search updateFeed={this.makeSearchQuery} />
           </div>
         </nav>
         <div className="row">
